@@ -24,10 +24,10 @@ $app->get('/starter.zip', function () {
         'vendorName' => $this->request->input('vendorName', 'maliboot'),
         'packageName' => $this->request->input('packageName', 'maliboot-skeleton'),
         'phpVersion' => $this->request->input('phpVersion', '8.0'),
-        'desc' => $this->request->input('desc', 'maliboot脚手架'),
-        'packagistUrl' => $this->request->input('packagistUrl', 'https://mirrors.aliyun.com/composer/'),
-        'requireDev' => $this->request->input('requireDev', ''),
-        'require' => $this->request->input('require', ''),
+        'desc' => urldecode($this->request->input('desc', 'maliboot脚手架')),
+        'packagistUrl' => urldecode($this->request->input('packagistUrl', 'https://mirrors.aliyun.com/composer/')),
+        'requireDev' => urldecode($this->request->input('requireDev', '')),
+        'require' => urldecode($this->request->input('require', '')),
     ];
     $tplDir = sprintf("%s/storage/maliboot-template/%s", BASE_PATH, $qry['version']);
     $qryBuildStr = md5(http_build_query($qry));
