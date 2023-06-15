@@ -28,7 +28,7 @@ $app->get('/starter.zip', function () {
         'packagistUrl' => urldecode($this->request->input('packagistUrl', 'https://mirrors.aliyun.com/composer/')),
         'requireDev' => urldecode($this->request->input('requireDev', '')),
         'require' => urldecode($this->request->input('require', '')),
-    ];
+    ];var_dump($qry);
     $tplDir = sprintf("%s/storage/maliboot-template/%s", BASE_PATH, $qry['version']);
     $qryBuildStr = md5(http_build_query($qry));
     $cacheComposerFile = sprintf("%s/%s.%s", $tplDir, $qryBuildStr, 'json');
@@ -44,15 +44,21 @@ $app->get('/starter.zip', function () {
         $composer['repositories']['packagist']['url'] = $qry['packagistUrl'];
         $qry['require'] && $composer['require'] = array_merge(
             $composer['require'],
-            array_reduce(explode(',', $qry['require']), function ($carry, $item) {
-                empty($item) || $carry[] = explode(":", $item);
+            ...array_reduce(explode(',', $qry['require']), function ($carry, $item) {
+                $offset = strpos($item, ':');
+                if (!empty($item) && $offset !== false) {
+                    $carry[][substr($item, 0, $offset++)] = substr($item, $offset);
+                }
                 return $carry;
             }, [])
         );
         $qry['requireDev'] && $composer['require-dev'] = array_merge(
             $composer['require-dev'],
-            array_reduce(explode(',', $qry['requireDev']), function ($carry, $item) {
-                empty($item) || $carry[] = explode(":", $item);
+            ...array_reduce(explode(',', $qry['requireDev']), function ($carry, $item) {
+                $offset = strpos($item, ':');
+                if (!empty($item) && $offset !== false) {
+                    $carry[][substr($item, 0, $offset++)] = substr($item, $offset);
+                }
                 return $carry;
             }, [])
         );
